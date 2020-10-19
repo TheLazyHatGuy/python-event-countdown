@@ -3,6 +3,8 @@ import os
 import sqlite3
 import time
 
+from inputimeout import inputimeout, TimeoutOccurred
+
 
 def create_db() -> bool:
     try:
@@ -154,19 +156,22 @@ if __name__ == '__main__':
             print(B + "q: " + W + "Quit")
             print("\n")
 
-            user = input("> ")
-
-            if len(user) > 0:
-                command = user.lower()[0]
-                if command == "q":
-                    run = False
-                elif command == "a":
-                    add_event()
-                elif command == "d":
-                    delete_event()
-                else:
-                    print("Invalid command")
-                    time.sleep(1)
+            try:
+                user = inputimeout(prompt='> ', timeout=30)
+            except TimeoutOccurred:
+                user = 'something'
+            else:
+                if len(user) > 0:
+                    command = user.lower()[0]
+                    if command == "q":
+                        run = False
+                    elif command == "a":
+                        add_event()
+                    elif command == "d":
+                        delete_event()
+                    else:
+                        print("Invalid command")
+                        time.sleep(1)
 
             clear()
         except KeyboardInterrupt:
