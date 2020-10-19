@@ -102,8 +102,13 @@ def print_events(events, current_time):
     if len(events) > 0:
         for event in events:
             try:
+                happened = False
                 date = datetime.datetime.strptime(event[1], "%d/%m/%Y %H:%M:%S")
                 diff = date - current_time
+
+                if diff.days < 0:
+                    diff = current_time - date
+                    happened = True
 
                 minutes, seconds = divmod(diff.seconds, 60)
                 hours, minutes = divmod(minutes, 60)
@@ -125,7 +130,11 @@ def print_events(events, current_time):
             except ValueError:
                 print(B + event[0] + ": " + R + "INVALID DATE: " + W + event[1])
             else:
-                print(B + event[0] + ": " + G + event[1] + W + " - " + date_str)
+                if happened:
+                    print(B + event[0] + ": " + G + event[1] + W + " - " + R + "Happened " + W + date_str
+                          + R + " ago" + W)
+                else:
+                    print(B + event[0] + ": " + G + event[1] + W + " - " + date_str)
     else:
         print(R + "NO DATA" + W)
 
